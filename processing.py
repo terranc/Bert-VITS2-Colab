@@ -24,9 +24,9 @@ def split_audio_by_srt(audio_file, srt_file, output_dir, index):
         # 考量到訓練資料最好大於2秒 所以新增判斷需大於2秒才會被切分
         duration = float(end_time) - float(start_time)
         if duration >= 2:
-            output_file = os.path.join(output_dir, f"{index}_{i}.wav")
+            output_file = os.path.join(output_dir, f"{index}_{i}.*")
             global txtLabel
-            txtLabel = txtLabel + f"{index}_{i}.wav|{character_name}|{lang}|{parts[2]}\n"
+            txtLabel = txtLabel + f"{index}_{i}.*|{character_name}|{lang}|{parts[2]}\n"
             
             subprocess.call(['ffmpeg', '-i', audio_file, '-ss', start_time, '-to', end_time, '-ac', '1', output_file])
 
@@ -43,7 +43,7 @@ output_dir = os.path.join(script_dir, "raw")
 txtLabel = ""
 
 # 使用 glob.glob 來取得符合條件的檔案清單
-audios = glob.glob(os.path.join(audio_dir, "*.wav"))
+audios = glob.glob(os.path.join(audio_dir, "*.*"))
 srts = glob.glob(os.path.join(srt_dir, "*.srt"))
 
 for i in audios:
@@ -53,7 +53,7 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 for audio_file in audios:
-    basename = os.path.basename(audio_file).replace(".wav", ".srt")
+    basename = os.path.basename(audio_file).replace(".*", ".srt")
     srt_file = os.path.join(srt_dir, basename)
 
     if srt_file in srts:
